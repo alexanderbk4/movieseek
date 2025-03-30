@@ -1,49 +1,67 @@
 import { Link } from 'react-router-dom'
+import { getTMDbImageUrl, formatNumber } from '../utils'
 
 const MovieCard = ({ movie }) => {
+  // Use the utility function for the image URL
+  const posterUrl = getTMDbImageUrl(movie.poster_path)
+
   return (
-    <div className="group bg-white dark:bg-gray-800 rounded-xl shadow-card hover:shadow-card-hover overflow-hidden transition-all duration-300 transform hover:-translate-y-1 animate-fade-in">
-      <Link to={`/movies/${movie.imdb_id}`}>
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+      <Link to={`/movies/${movie.id}`} className="block">
         <div className="relative pb-[150%]">
-          {movie.poster_url ? (
+          {posterUrl ? (
             <img
-              src={movie.poster_url}
+              src={posterUrl}
               alt={movie.title}
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="absolute inset-0 w-full h-full object-cover"
               loading="lazy"
             />
           ) : (
-            <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+            <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
               <span className="text-gray-500 dark:text-gray-400">No Image</span>
             </div>
           )}
           
-          <div className="absolute top-2 right-2 bg-accent text-white text-xs font-bold py-1 px-2 rounded-md shadow-md">
-            {movie.imdb_rating ? movie.imdb_rating.toFixed(1) : 'N/A'}
-          </div>
-
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-80 transition-opacity duration-300"></div>
+          {movie.rating && (
+            <div className="absolute top-2 right-2 bg-black/70 text-yellow-400 text-sm font-bold px-2 py-1 rounded flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              {Number(movie.rating).toFixed(1)}
+            </div>
+          )}
+          
+          {movie.votes && (
+            <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+              {formatNumber(movie.votes)} votes
+            </div>
+          )}
         </div>
         
-        <div className="p-3">
-          <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate group-hover:text-secondary transition-colors duration-200">
-            {movie.title}
-          </h3>
-          
-          <div className="mt-1 text-xs text-gray-600 dark:text-gray-300">
-            {movie.year}
+        <div className="p-4">
+          <h3 className="font-bold text-gray-900 dark:text-white mb-1 line-clamp-1">{movie.title}</h3>
+          <div className="flex justify-between items-center">
+            <span className="text-gray-500 dark:text-gray-400 text-sm">{movie.year}</span>
+            {movie.language && movie.language !== 'en' && (
+              <span className="text-gray-500 dark:text-gray-400 text-xs uppercase">{movie.language}</span>
+            )}
           </div>
           
-          <div className="mt-2 flex flex-wrap gap-1">
-            {movie.genres.slice(0, 3).map((genre) => (
-              <span
-                key={genre.id}
-                className="text-xs bg-primary-100 dark:bg-primary-800 text-primary-800 dark:text-primary-200 px-1.5 py-0.5 rounded-full"
-              >
-                {genre.name}
-              </span>
-            ))}
-          </div>
+          {movie.genres && movie.genres.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {movie.genres.slice(0, 3).map((genre) => (
+                <span 
+                  key={genre.id} 
+                  className="bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 px-2 py-0.5 rounded text-xs"
+                >
+                  {genre.name}
+                </span>
+              ))}
+              {movie.genres.length > 3 && (
+                <span className="text-gray-500 dark:text-gray-400 text-xs">+{movie.genres.length - 3}</span>
+              )}
+            </div>
+          )}
         </div>
       </Link>
     </div>

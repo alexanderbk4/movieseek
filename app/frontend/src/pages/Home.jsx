@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
 import MovieCard from '../components/MovieCard'
+import { getTMDbImageUrl } from '../utils'
 
 const Home = () => {
   const [movies, setMovies] = useState([])
+  const [genres, setGenres] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -11,61 +14,17 @@ const Home = () => {
     const fetchMovies = async () => {
       try {
         setLoading(true)
-        // Replace with actual API endpoint when it's ready
-        // const response = await axios.get('/api/movies')
-        // setMovies(response.data)
+        // Fetch real data from API
+        const response = await axios.get('/api/movies?limit=24')
         
-        // Mock data for development
-        setMovies([
-          {
-            imdb_id: 'tt0111161',
-            title: 'The Shawshank Redemption',
-            year: 1994,
-            imdb_rating: 9.3,
-            poster_url: 'https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg',
-            genres: [{ id: 1, name: 'Drama' }, { id: 2, name: 'Crime' }]
-          },
-          {
-            imdb_id: 'tt0068646',
-            title: 'The Godfather',
-            year: 1972,
-            imdb_rating: 9.2,
-            poster_url: 'https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg',
-            genres: [{ id: 2, name: 'Crime' }, { id: 3, name: 'Drama' }]
-          },
-          {
-            imdb_id: 'tt0468569',
-            title: 'The Dark Knight',
-            year: 2008,
-            imdb_rating: 9.0,
-            poster_url: 'https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg',
-            genres: [{ id: 4, name: 'Action' }, { id: 5, name: 'Crime' }, { id: 6, name: 'Drama' }]
-          },
-          {
-            imdb_id: 'tt0071562',
-            title: 'The Godfather Part II',
-            year: 1974,
-            imdb_rating: 9.0,
-            poster_url: 'https://m.media-amazon.com/images/M/MV5BMWMwMGQzZTItY2JlNC00OWZiLWIyMDctNDk2ZDQ2YjRjMWQ0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg',
-            genres: [{ id: 2, name: 'Crime' }, { id: 3, name: 'Drama' }]
-          },
-          {
-            imdb_id: 'tt0050083',
-            title: '12 Angry Men',
-            year: 1957,
-            imdb_rating: 9.0,
-            poster_url: 'https://m.media-amazon.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_.jpg',
-            genres: [{ id: 1, name: 'Drama' }, { id: 7, name: 'Crime' }]
-          },
-          {
-            imdb_id: 'tt0108052',
-            title: 'Schindler\'s List',
-            year: 1993,
-            imdb_rating: 8.9,
-            poster_url: 'https://m.media-amazon.com/images/M/MV5BNDE4OTMxMTctNmRhYy00NWE2LTg3YzItYTk3M2UwOTU5Njg4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg',
-            genres: [{ id: 8, name: 'Biography' }, { id: 9, name: 'Drama' }, { id: 10, name: 'History' }]
-          }
-        ])
+        // Map any necessary transformations
+        const processedMovies = response.data.map(movie => ({
+          ...movie,
+          // Extract year from the movie model if needed
+          year: movie.year
+        }))
+        
+        setMovies(processedMovies)
         setError(null)
       } catch (err) {
         console.error('Error fetching movies:', err)
@@ -75,31 +34,46 @@ const Home = () => {
       }
     }
 
+    const fetchGenres = async () => {
+      try {
+        const response = await axios.get('/api/genres')
+        setGenres(response.data)
+      } catch (err) {
+        console.error('Error fetching genres:', err)
+      }
+    }
+
+    // Fetch both movies and genres
     fetchMovies()
+    fetchGenres()
   }, [])
 
   return (
     <div className="animate-fade-in">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-900 to-primary-800 text-white rounded-2xl overflow-hidden mb-12">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80')] bg-cover bg-center"></div>
-        <div className="relative px-6 py-12 md:py-20 md:px-12 max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            Discover <span className="text-accent">Exceptional</span> Movies
-          </h1>
-          <p className="text-lg md:text-xl text-gray-200 max-w-3xl mb-8">
-            Explore our curated collection of high-quality films with comprehensive insights and thoughtful recommendations.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <button className="px-6 py-3 bg-accent hover:bg-accent-600 transition-colors rounded-lg font-medium shadow-lg">
-              Browse Top Rated
-            </button>
-            <button className="px-6 py-3 bg-primary-700 hover:bg-primary-600 transition-colors rounded-lg font-medium border border-primary-600">
-              Explore Genres
-            </button>
-          </div>
-        </div>
-      </section>
+      <div className="relative h-64 md:h-96 w-full mb-8">
+        {movies.length > 0 && (
+          <>
+            <img
+              src={getTMDbImageUrl(movies[0].backdrop_path, 'original') || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80'}
+              alt="Featured movie"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent"></div>
+            <div className="absolute bottom-0 left-0 p-6 max-w-md">
+              <h1 className="text-3xl font-bold text-white mb-2">{movies[0].title}</h1>
+              <p className="text-gray-200 mb-4">{movies[0].year} • {movies[0].genres?.map(g => g.name).join(', ')}</p>
+              <Link
+                to={`/movies/${movies[0].id}`}
+                className="inline-block bg-secondary hover:bg-secondary-600 text-white py-2 px-4 rounded-full transition-colors"
+              >
+                View Details
+              </Link>
+            </div>
+          </>
+        )}
+      </div>
 
       {/* Featured Movies Section */}
       <section className="mb-12">
@@ -126,7 +100,7 @@ const Home = () => {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
             {movies.map((movie) => (
-              <MovieCard key={movie.imdb_id} movie={movie} />
+              <MovieCard key={movie.id} movie={movie} />
             ))}
           </div>
         )}
@@ -138,11 +112,20 @@ const Home = () => {
           Browse by Genre
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {['Action', 'Drama', 'Comedy', 'Thriller', 'Sci-Fi', 'Horror', 'Romance', 'Documentary'].map((genre) => (
-            <div key={genre} className="bg-white dark:bg-gray-800 shadow-card rounded-xl p-6 text-center cursor-pointer hover:shadow-card-hover transition-all hover:bg-secondary hover:text-white group">
-              <h3 className="text-lg font-medium group-hover:text-white">{genre}</h3>
-            </div>
-          ))}
+          {genres.length > 0 ? (
+            genres.map((genre) => (
+              <div key={genre.id} className="bg-white dark:bg-gray-800 shadow-card rounded-xl p-6 text-center cursor-pointer hover:shadow-card-hover transition-all hover:bg-secondary hover:text-white group">
+                <h3 className="text-lg font-medium group-hover:text-white">{genre.name}</h3>
+              </div>
+            ))
+          ) : (
+            // Fallback genre list if API call fails
+            ['Action', 'Drama', 'Comedy', 'Thriller', 'Sci-Fi', 'Horror', 'Romance', 'Documentary'].map((genre) => (
+              <div key={genre} className="bg-white dark:bg-gray-800 shadow-card rounded-xl p-6 text-center cursor-pointer hover:shadow-card-hover transition-all hover:bg-secondary hover:text-white group">
+                <h3 className="text-lg font-medium group-hover:text-white">{genre}</h3>
+              </div>
+            ))
+          )}
         </div>
       </section>
     </div>
