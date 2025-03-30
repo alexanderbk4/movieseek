@@ -69,6 +69,7 @@
             <a href="/admin/">Dashboard</a>
             <a href="/admin/movies">Movies</a>
             <a href="/admin/genres">Genres</a>
+            <a href="/admin/import">Import</a>
         </div>
         
         <h1>Movies</h1>
@@ -81,7 +82,7 @@
                     <th>Year</th>
                     <th>Director</th>
                     <th>Runtime</th>
-                    <th>IMDb Rating</th>
+                    <th>TMDB Rating</th>
                     <th>Genres</th>
                 </tr>
             </thead>
@@ -93,7 +94,7 @@
                     <td>{{ movie.year }}</td>
                     <td>{{ movie.director }}</td>
                     <td>{{ movie.runtime }} min</td>
-                    <td>{{ movie.imdb_rating }} ({{ movie.imdb_votes }} votes)</td>
+                    <td>{{ movie.rating }} ({{ movie.votes }} votes)</td>
                     <td>
                         {% for genre in movie.genres %}
                         <span class="badge">{{ genre.name }}</span>
