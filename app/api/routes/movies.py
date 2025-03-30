@@ -1,12 +1,12 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.database.config import get_db
 from app.database.models.movie import Movie as MovieModel, Genre
-from app.api.services.movie_service import get_movies, get_movie_by_id, add_genre_to_movie
+from app.api.services.movie_service import get_movie_by_id, add_genre_to_movie
 
-router = APIRouter(prefix="/movies", tags=["movies"])
+router = APIRouter()
 
 @router.get("/")
 def read_movies(
@@ -23,7 +23,7 @@ def read_movies(
     """
     Get a list of movies with optional filtering.
     """
-    query = db.query(MovieModel)
+    query = db.query(MovieModel).options(joinedload(MovieModel.genres))
     
     # Apply filters
     if title:
@@ -47,7 +47,8 @@ def read_movies(
         if genres_list:
             query = query.join(MovieModel.genres).filter(Genre.name.in_(genres_list))
     
-    # Apply pagination
+    # Apply pagination and ordering
+    query = query.order_by(MovieModel.rating.desc())
     movies = query.offset(skip).limit(limit).all()
     
     return movies
@@ -57,7 +58,7 @@ def read_movie(movie_id: int, db: Session = Depends(get_db)):
     """
     Get a specific movie by its ID.
     """
-    db_movie = db.query(MovieModel).filter(MovieModel.id == movie_id).first()
+    db_movie = get_movie_by_id(db, movie_id)
     if db_movie is None:
         raise HTTPException(status_code=404, detail="Movie not found")
     return db_movie
