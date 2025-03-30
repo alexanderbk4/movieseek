@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Movies - MovieSeek Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nav {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .nav a {
+            margin-right: 15px;
+            text-decoration: none;
+            color: #0366d6;
+        }
+        .nav a:hover {
+            text-decoration: underline;
+        }
+        .card {
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #0366d6;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0255b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="/admin/">Dashboard</a>
+            <a href="/admin/movies">Movies</a>
+            <a href="/admin/genres">Genres</a>
+            <a href="/admin/import">Import</a>
+        </div>
+        
+        <h1>Import Movies from TMDb</h1>
+        
+        <div class="card">
+            <h2>Import Popular Movies</h2>
+            <p>Import popular movies from The Movie Database (TMDb).</p>
+            <form action="/admin/import/popular" method="post">
+                <label for="popular_page_count">Number of Pages (1-5):</label>
+                <input type="number" id="popular_page_count" name="page_count" min="1" max="5" value="1" required>
+                <button type="submit">Import Popular Movies</button>
+            </form>
+        </div>
+        
+        <div class="card">
+            <h2>Import Top Rated Movies</h2>
+            <p>Import top rated movies from The Movie Database (TMDb).</p>
+            <form action="/admin/import/top_rated" method="post">
+                <label for="top_rated_page_count">Number of Pages (1-5):</label>
+                <input type="number" id="top_rated_page_count" name="page_count" min="1" max="5" value="1" required>
+                <button type="submit">Import Top Rated Movies</button>
+            </form>
+        </div>
+        
+        <div class="card">
+            <h2>Search and Import Movies</h2>
+            <p>Search for movies by title and import them from The Movie Database (TMDb).</p>
+            <form action="/admin/import/search" method="post">
+                <label for="search_query">Search Query:</label>
+                <input type="text" id="search_query" name="query" required>
+                <label for="search_page_count">Number of Pages (1-5):</label>
+                <input type="number" id="search_page_count" name="page_count" min="1" max="5" value="1" required>
+                <button type="submit">Search and Import</button>
+            </form>
+        </div>
+        
+        <div class="card">
+            <h2>Important Notes</h2>
+            <ul>
+                <li>Importing data from TMDb requires a valid API key in your .env file.</li>
+                <li>Each page contains approximately 20 movies.</li>
+                <li>The import process may take some time depending on the number of pages.</li>
+                <li>Movies that already exist in the database will be skipped.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 
