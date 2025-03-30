@@ -22,9 +22,10 @@ class Movie(Base, TimestampMixin):
     year = Column(Integer, nullable=False)
     director = Column(String(255), nullable=True)
     runtime = Column(Integer, nullable=True)  # in minutes
-    imdb_rating = Column(DECIMAL(3, 1), nullable=True)  # e.g., 8.7
-    imdb_votes = Column(Integer, nullable=True)
-    imdb_id = Column(String(20), nullable=True)  # storing this for reference
+    rating = Column(DECIMAL(3, 1), nullable=True)  # TMDB rating e.g., 8.7
+    votes = Column(Integer, nullable=True)   # TMDB vote count
+    tmdb_id = Column(Integer, nullable=True)  # TMDB ID
+    imdb_id = Column(String(20), nullable=True)  # IMDb ID for reference
     
     # Relationships
     genres = relationship("Genre", secondary=movie_genre, back_populates="movies")
