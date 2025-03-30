@@ -55,7 +55,9 @@ const Home = () => {
         {movies.length > 0 && (
           <>
             <img
-              src={getTMDbImageUrl(movies[0].backdrop_path, 'original') || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80'}
+              src={movies[0].backdrop_path 
+                ? getTMDbImageUrl(movies[0].backdrop_path, 'original')
+                : 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80'}
               alt="Featured movie"
               className="absolute inset-0 w-full h-full object-cover"
             />

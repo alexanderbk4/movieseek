@@ -3,7 +3,7 @@ import { getTMDbImageUrl, formatNumber } from '../utils'
 
 const MovieCard = ({ movie }) => {
   // Use the utility function for the image URL
-  const posterUrl = getTMDbImageUrl(movie.poster_path)
+  const posterUrl = movie.poster_path ? getTMDbImageUrl(movie.poster_path) : null
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">

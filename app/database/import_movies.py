@@ -85,6 +85,10 @@ async def import_movie(db: Session, movie_data: Dict[str, Any]):
     # Get original language
     language = movie_details.get("original_language")
     
+    # Get poster and backdrop paths
+    poster_path = movie_details.get("poster_path")
+    backdrop_path = movie_details.get("backdrop_path")
+    
     # Create new movie
     new_movie = Movie(
         identifier=identifier,
@@ -96,7 +100,9 @@ async def import_movie(db: Session, movie_data: Dict[str, Any]):
         votes=movie_details.get("vote_count"),    # TMDB vote count
         tmdb_id=movie_id,                        # TMDB ID
         imdb_id=imdb_id,                         # IMDb ID
-        language=language                        # Original language
+        language=language,                       # Original language
+        poster_path=poster_path,                 # Poster image path
+        backdrop_path=backdrop_path              # Backdrop image path
     )
     
     db.add(new_movie)

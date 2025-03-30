@@ -27,6 +27,8 @@ class Movie(Base, TimestampMixin):
     tmdb_id = Column(Integer, nullable=True)  # TMDB ID
     imdb_id = Column(String(20), nullable=True)  # IMDb ID for reference
     language = Column(String(10), nullable=True)  # Original language (e.g. 'en', 'ko', 'fr')
+    poster_path = Column(String(255), nullable=True)  # TMDb poster image path
+    backdrop_path = Column(String(255), nullable=True)  # TMDb backdrop image path
     
     # Relationships
     genres = relationship("Genre", secondary=movie_genre, back_populates="movies")

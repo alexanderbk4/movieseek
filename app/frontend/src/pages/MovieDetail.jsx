@@ -59,7 +59,7 @@ const MovieDetail = () => {
     : 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80'
 
   // Generate fallback poster if none is available
-  const posterUrl = getTMDbImageUrl(movie.poster_path)
+  const posterUrl = movie.poster_path ? getTMDbImageUrl(movie.poster_path) : null
 
   return (
     <div className="animate-fade-in max-w-7xl mx-auto">
