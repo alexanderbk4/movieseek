@@ -1,24 +1,25 @@
 # MovieSeek
 
-A movie recommendation system with database management and API.
+A vibecoded movie database application with recommendation system.
 
 ## Overview
 
-MovieSeek is a web application that provides movie information and recommendations. It features:
+MovieSeek is a vibecoded web application that provides movie information and recommendations. It features:
 
 - Movie database with details like title, year, director, ratings, etc.
 - Genre categorization and filtering
 - Admin interface for database management
 - RESTful API for accessing movie data
+- Beautiful, responsive frontend with modern UI
 - (Upcoming) Movie recommendations based on user preferences
 
 ## Tech Stack
 
 - **Backend**: FastAPI, SQLAlchemy, Uvicorn
-- **Database**: SQLite (development), PostgreSQL (production)
-- **Frontend**: Simple admin dashboard with Jinja2 templates
+- **Database**: SQLite 
+- **Frontend**: React with TailwindCSS
 - **API**: RESTful API with JSON responses
-- **Data Source**: TMDb API (planned)
+- **Data Source**: The Movie Database (TMDb) API
 
 ## Setup and Installation
 
@@ -97,11 +98,15 @@ CREATE TABLE movies (
     year INTEGER NOT NULL,
     director VARCHAR(255),
     runtime INTEGER,
-    imdb_rating DECIMAL(3, 1),
-    imdb_votes INTEGER,
+    rating DECIMAL(3, 1),
+    votes INTEGER,
+    tmdb_id INTEGER,
     imdb_id VARCHAR(20),
-    created_at TIMESTAMP WITH TIME ZONE,
-    updated_at TIMESTAMP WITH TIME ZONE
+    language VARCHAR(10),
+    poster_path VARCHAR(255),
+    backdrop_path VARCHAR(255),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
 ```
 
