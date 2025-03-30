@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Home from './pages/Home'
 import MovieDetail from './pages/MovieDetail'
 import NotFound from './pages/NotFound'
+import Test from './pages/Test'
 import Layout from './components/Layout'
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="movies/:id" element={<MovieDetail />} />
+        <Route path="test" element={<Test />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
