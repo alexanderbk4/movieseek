@@ -36,10 +36,10 @@ def read_movies(
         query = query.filter(MovieModel.year <= year_to)
     
     if rating_from:
-        query = query.filter(MovieModel.imdb_rating >= rating_from)
+        query = query.filter(MovieModel.rating >= rating_from)
     
     if rating_to:
-        query = query.filter(MovieModel.imdb_rating <= rating_to)
+        query = query.filter(MovieModel.rating <= rating_to)
     
     # Filter by genres if provided
     if genres:
