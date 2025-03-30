@@ -50,7 +50,7 @@ class Movie(Base, TimestampMixin):
     backdrop_url = Column(String, nullable=True)
     
     # Extended metadata (flexible structure)
-    metadata = Column(JSON, nullable=True)
+    movie_metadata = Column(JSON, nullable=True)
     
     # Relationships
     genres = relationship("Genre", secondary=movie_genre, back_populates="movies")

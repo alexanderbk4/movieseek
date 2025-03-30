@@ -74,7 +74,7 @@ def create_movie(db: Session, movie: MovieCreate) -> Movie:
         tagline=movie.tagline,
         poster_url=movie.poster_url,
         backdrop_url=movie.backdrop_url,
-        metadata=movie.metadata
+        movie_metadata=movie.movie_metadata
     )
     db.add(db_movie)
     db.commit()

@@ -13,7 +13,7 @@ class Genre(GenreBase):
     id: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PersonBase(BaseModel):
     name: str
@@ -28,7 +28,7 @@ class Actor(PersonBase):
     id: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class DirectorCreate(PersonBase):
     pass
@@ -37,7 +37,7 @@ class Director(PersonBase):
     id: int
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Movie schemas
 class MovieBase(BaseModel):
@@ -54,7 +54,7 @@ class MovieBase(BaseModel):
     tagline: Optional[str] = None
     poster_url: Optional[str] = None
     backdrop_url: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
+    movie_metadata: Optional[Dict[str, Any]] = None
 
 class MovieCreate(MovieBase):
     imdb_id: str
@@ -71,7 +71,7 @@ class Movie(MovieBase):
     directors: List[Director] = []
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Schema for filtering movies
 class MovieFilter(BaseModel):
