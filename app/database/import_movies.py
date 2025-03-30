@@ -82,6 +82,9 @@ async def import_movie(db: Session, movie_data: Dict[str, Any]):
     # Extract IMDb info
     imdb_id = movie_details.get("imdb_id")
     
+    # Get original language
+    language = movie_details.get("original_language")
+    
     # Create new movie
     new_movie = Movie(
         identifier=identifier,
@@ -92,7 +95,8 @@ async def import_movie(db: Session, movie_data: Dict[str, Any]):
         rating=movie_details.get("vote_average"),  # TMDB rating
         votes=movie_details.get("vote_count"),    # TMDB vote count
         tmdb_id=movie_id,                        # TMDB ID
-        imdb_id=imdb_id                           # IMDb ID
+        imdb_id=imdb_id,                         # IMDb ID
+        language=language                        # Original language
     )
     
     db.add(new_movie)

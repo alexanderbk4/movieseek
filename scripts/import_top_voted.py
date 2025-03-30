@@ -3,7 +3,8 @@
 Import top 1000 movies by vote count from TMDb.
 
 This script fetches movies with the highest number of votes from TMDb
-and imports them into the database.
+and imports them into the database. It includes movies in all languages
+with the highest vote counts globally.
 """
 
 import os
@@ -58,7 +59,6 @@ async def fetch_top_voted_movies(page_count=50, min_votes=1000):
             "include_video": "false",
             "page": page,
             "vote_count.gte": min_votes,  # Only include movies with at least the specified votes
-            "with_original_language": "en"  # Start with English language movies
         }
         
         response = await tmdb_api._make_request(endpoint, params)

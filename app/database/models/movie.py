@@ -26,6 +26,7 @@ class Movie(Base, TimestampMixin):
     votes = Column(Integer, nullable=True)   # TMDB vote count
     tmdb_id = Column(Integer, nullable=True)  # TMDB ID
     imdb_id = Column(String(20), nullable=True)  # IMDb ID for reference
+    language = Column(String(10), nullable=True)  # Original language (e.g. 'en', 'ko', 'fr')
     
     # Relationships
     genres = relationship("Genre", secondary=movie_genre, back_populates="movies")
@@ -35,6 +36,7 @@ class Movie(Base, TimestampMixin):
         Index('idx_movies_identifier', identifier),
         Index('idx_movies_title', title),
         Index('idx_movies_year', year),
+        Index('idx_movies_language', language),
     )
 
 class Genre(Base):

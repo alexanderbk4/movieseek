@@ -74,6 +74,7 @@ async def get_movies(db: Session = Depends(get_db)):
             "votes": movie.votes,
             "tmdb_id": movie.tmdb_id,
             "imdb_id": movie.imdb_id,
+            "language": movie.language,
             "genres": [genre.name for genre in movie.genres],
             "created_at": movie.created_at.isoformat() if movie.created_at else None,
             "updated_at": movie.updated_at.isoformat() if movie.updated_at else None,

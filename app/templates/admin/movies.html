@@ -81,6 +81,7 @@
                     <th>Title</th>
                     <th>Year</th>
                     <th>Director</th>
+                    <th>Language</th>
                     <th>Runtime</th>
                     <th>TMDB Rating</th>
                     <th>Genres</th>
@@ -93,6 +94,7 @@
                     <td>{{ movie.title }}</td>
                     <td>{{ movie.year }}</td>
                     <td>{{ movie.director }}</td>
+                    <td>{{ movie.language|upper if movie.language else "-" }}</td>
                     <td>{{ movie.runtime }} min</td>
                     <td>{{ movie.rating }} ({{ movie.votes }} votes)</td>
                     <td>
