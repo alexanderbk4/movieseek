@@ -1,90 +1,152 @@
 # MovieSeek
 
-A sophisticated movie recommendation system focused on quality insights and rich data exploration.
+A movie recommendation system with database management and API.
 
-## Project Overview
+## Overview
 
-MovieSeek is a movie-centered recommendation platform that offers:
+MovieSeek is a web application that provides movie information and recommendations. It features:
 
-- High-quality movie data with comprehensive details
-- Advanced filtering and sorting capabilities
-- Quality metrics beyond basic ratings
-- Intuitive UI for movie discovery and exploration
+- Movie database with details like title, year, director, ratings, etc.
+- Genre categorization and filtering
+- Admin interface for database management
+- RESTful API for accessing movie data
+- (Upcoming) Movie recommendations based on user preferences
 
-## Technical Stack
+## Tech Stack
 
-- **Frontend**: React with Vite and Tailwind CSS
-- **Backend**: FastAPI (Python)
-- **Database**: PostgreSQL
-- **ORM**: SQLAlchemy with Alembic for migrations
+- **Backend**: FastAPI, SQLAlchemy, Uvicorn
+- **Database**: SQLite (development), PostgreSQL (production)
+- **Frontend**: Simple admin dashboard with Jinja2 templates
+- **API**: RESTful API with JSON responses
+- **Data Source**: TMDb API (planned)
 
-## Data Strategy
-
-- Initial dataset includes the top 1000 most-rated movies from IMDb
-- Primary identifier: IMDb IDs (e.g., tt0111161)
-- Rating system: Primarily IMDb ratings with supplementary metrics
-- Data sources:
-  - IMDb datasets (available for non-commercial use)
-  - The Movie Database (TMDb) API as a supplementary source
-
-## Setup Instructions
+## Setup and Installation
 
 ### Prerequisites
 
-- Python 3.10+
-- Node.js 16+
-- PostgreSQL 14+
+- Python 3.9+
+- Virtual environment (recommended)
 
-### Backend Setup
+### Installation
 
-1. Create a virtual environment:
+1. Clone the repository:
+   ```
+   git clone https://github.com/your-username/movieseek.git
+   cd movieseek
+   ```
+
+2. Create and activate a virtual environment:
    ```
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
-2. Install dependencies:
+3. Install dependencies:
    ```
    pip install -r requirements.txt
    ```
 
-3. Configure environment variables:
-   - Copy `.env.example` to `.env` and update values
+4. Set up environment variables (create a `.env` file in the project root):
+   ```
+   # Database Configuration
+   DATABASE_URL=sqlite:///./movieseek.db
+   DATABASE_TEST_URL=sqlite:///./movieseek_test.db
 
-4. Run database migrations:
-   ```
-   alembic upgrade head
-   ```
+   # API Keys
+   TMDB_API_KEY=your_tmdb_api_key_here
+   TMDB_ACCESS_TOKEN=your_tmdb_read_access_token_here
 
-5. Start the backend server:
-   ```
-   python main.py
-   ```
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-   ```
-   cd app/frontend
+   # Application Settings
+   DEBUG=True
+   SECRET_KEY=dev_secret_key_change_in_production
+   ALLOWED_HOSTS=localhost,127.0.0.1
    ```
 
-2. Install dependencies:
+5. Run the application:
    ```
-   npm install
-   ```
-
-3. Start the development server:
-   ```
-   npm run dev
+   uvicorn main:app --reload
    ```
 
-## Development Roadmap
+The application will be available at `http://localhost:8000`
 
-1. **Database Foundation**: Establish core schema and import initial dataset
-2. **API Layer**: Build basic CRUD and filtering endpoints
-3. **Quality Metrics**: Implement advanced metrics and analysis
-4. **UI Development**: Create movie-centered browsing experience
+## API Endpoints
+
+### Movies
+
+- `GET /api/movies/` - List all movies with optional filtering
+- `GET /api/movies/{movie_id}` - Get a specific movie by ID
+- `POST /api/movies/{movie_id}/genres/{genre_id}` - Add a genre to a movie
+
+### Admin Interface
+
+- `GET /admin/` - Admin dashboard
+- `GET /admin/movies` - View all movies
+- `GET /admin/genres` - View all genres
+- `GET /admin/api/movies` - Get all movies as JSON
+- `GET /admin/api/genres` - Get all genres as JSON
+
+## Database Schema
+
+### Movies Table
+
+```sql
+CREATE TABLE movies (
+    id INTEGER PRIMARY KEY,
+    identifier VARCHAR(255) UNIQUE NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    year INTEGER NOT NULL,
+    director VARCHAR(255),
+    runtime INTEGER,
+    imdb_rating DECIMAL(3, 1),
+    imdb_votes INTEGER,
+    imdb_id VARCHAR(20),
+    created_at TIMESTAMP WITH TIME ZONE,
+    updated_at TIMESTAMP WITH TIME ZONE
+);
+```
+
+### Genres Table
+
+```sql
+CREATE TABLE genres (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL
+);
+```
+
+### Junction Table (Movie-Genre)
+
+```sql
+CREATE TABLE movie_genres (
+    movie_id INTEGER REFERENCES movies(id),
+    genre_id INTEGER REFERENCES genres(id),
+    PRIMARY KEY (movie_id, genre_id)
+);
+```
+
+## Data Source
+
+This project uses The Movie Database (TMDb) API to fetch movie data. You'll need to register for a free API key at [https://www.themoviedb.org/documentation/api](https://www.themoviedb.org/documentation/api) and add it to your `.env` file:
+
+```
+TMDB_API_KEY=your_tmdb_api_key_here
+TMDB_ACCESS_TOKEN=your_tmdb_read_access_token_here
+```
+
+## Utility Scripts
+
+The `scripts` directory contains various utility scripts for managing the application:
+
+- **Database Management**: Clear the database (`scripts/clear_database.py`)
+- **TMDb Exploration**: Explore TMDb data (`scripts/explore_tmdb.py`, `scripts/find_most_rated_movies.py`)
+- **Data Import**: Import movie data from TMDb (`scripts/quick_import.py`, `scripts/import_tmdb_data.py`)
+
+See the [scripts README](scripts/README.md) for more details and usage examples.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+[MIT License](LICENSE)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
