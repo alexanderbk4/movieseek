@@ -1,13 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Depends, HTTPException, Request, Form
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import os
 from pathlib import Path
 
 from app.database.config import get_db
 from app.database.models import Movie, Genre
+from app.api.services.tmdb_service import tmdb_api
+from app.database.import_movies import (
+    fetch_and_store_genres,
+    import_popular_movies,
+    import_top_rated_movies,
+    search_and_import_movies
+)
 
 # Create templates directory if it doesn't exist
 templates_dir = Path("app/templates")
@@ -63,8 +70,9 @@ async def get_movies(db: Session = Depends(get_db)):
             "year": movie.year,
             "director": movie.director,
             "runtime": movie.runtime,
-            "imdb_rating": float(movie.imdb_rating) if movie.imdb_rating else None,
-            "imdb_votes": movie.imdb_votes,
+            "rating": float(movie.rating) if movie.rating else None,
+            "votes": movie.votes,
+            "tmdb_id": movie.tmdb_id,
             "imdb_id": movie.imdb_id,
             "genres": [genre.name for genre in movie.genres],
             "created_at": movie.created_at.isoformat() if movie.created_at else None,
@@ -78,4 +86,40 @@ async def get_movies(db: Session = Depends(get_db)):
 async def get_genres(db: Session = Depends(get_db)):
     """Get all genres as JSON."""
     genres = db.query(Genre).all()
-    return [{"id": genre.id, "name": genre.name} for genre in genres] 
+    return [{"id": genre.id, "name": genre.name} for genre in genres]
+
+@admin_router.get("/import", response_class=HTMLResponse)
+async def import_page(request: Request):
+    """Admin page for importing data from TMDb."""
+    return templates.TemplateResponse("admin/import.html", {"request": request})
+
+@admin_router.post("/import/popular")
+async def import_popular(
+    request: Request,
+    page_count: int = Form(1),
+    db: Session = Depends(get_db)
+):
+    """Import popular movies from TMDb."""
+    await import_popular_movies(db, page_count=page_count)
+    return RedirectResponse(url="/admin/movies", status_code=303)
+
+@admin_router.post("/import/top_rated")
+async def import_top_rated(
+    request: Request,
+    page_count: int = Form(1),
+    db: Session = Depends(get_db)
+):
+    """Import top rated movies from TMDb."""
+    await import_top_rated_movies(db, page_count=page_count)
+    return RedirectResponse(url="/admin/movies", status_code=303)
+
+@admin_router.post("/import/search")
+async def import_from_search(
+    request: Request,
+    query: str = Form(...),
+    page_count: int = Form(1),
+    db: Session = Depends(get_db)
+):
+    """Search for movies by title and import them."""
+    await search_and_import_movies(db, query, page_count=page_count)
+    return RedirectResponse(url="/admin/movies", status_code=303) 
