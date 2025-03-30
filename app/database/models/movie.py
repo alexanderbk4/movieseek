@@ -24,6 +24,8 @@ class Movie(Base, TimestampMixin):
     runtime = Column(Integer, nullable=True)  # in minutes
     rating = Column(DECIMAL(3, 1), nullable=True)  # TMDB rating e.g., 8.7
     votes = Column(Integer, nullable=True)   # TMDB vote count
+    rym_rating = Column(DECIMAL(3, 2), nullable=True)  # RYM rating e.g., 3.82
+    rym_votes = Column(Integer, nullable=True)  # RYM vote count
     tmdb_id = Column(Integer, nullable=True)  # TMDB ID
     imdb_id = Column(String(20), nullable=True)  # IMDb ID for reference
     language = Column(String(10), nullable=True)  # Original language (e.g. 'en', 'ko', 'fr')
