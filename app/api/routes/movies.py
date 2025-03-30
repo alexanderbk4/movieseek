@@ -2,14 +2,13 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app.api.schemas.movie import Movie, MovieCreate, MovieUpdate, MovieFilter
-from app.database.models.movie import Movie as MovieModel
 from app.database.config import get_db
-from app.api.services.movie_service import get_movies, get_movie_by_id, create_movie, update_movie, delete_movie
+from app.database.models.movie import Movie as MovieModel, Genre
+from app.api.services.movie_service import get_movies, get_movie_by_id, add_genre_to_movie
 
 router = APIRouter(prefix="/movies", tags=["movies"])
 
-@router.get("/", response_model=List[Movie])
+@router.get("/")
 def read_movies(
     skip: int = 0, 
     limit: int = 100,
@@ -19,67 +18,56 @@ def read_movies(
     rating_from: Optional[float] = None,
     rating_to: Optional[float] = None,
     genres: Optional[str] = Query(None),  # Comma-separated list of genres
-    directors: Optional[str] = Query(None),  # Comma-separated list of directors
-    actors: Optional[str] = Query(None),  # Comma-separated list of actors
     db: Session = Depends(get_db)
 ):
     """
     Get a list of movies with optional filtering.
     """
-    # Parse comma-separated lists
-    genres_list = genres.split(",") if genres else None
-    directors_list = directors.split(",") if directors else None
-    actors_list = actors.split(",") if actors else None
+    query = db.query(MovieModel)
     
-    # Create filter object
-    movie_filter = MovieFilter(
-        title=title,
-        year_from=year_from,
-        year_to=year_to,
-        rating_from=rating_from,
-        rating_to=rating_to,
-        genres=genres_list,
-        directors=directors_list,
-        actors=actors_list
-    )
+    # Apply filters
+    if title:
+        query = query.filter(MovieModel.title.ilike(f"%{title}%"))
     
-    movies = get_movies(db, skip=skip, limit=limit, movie_filter=movie_filter)
+    if year_from:
+        query = query.filter(MovieModel.year >= year_from)
+    
+    if year_to:
+        query = query.filter(MovieModel.year <= year_to)
+    
+    if rating_from:
+        query = query.filter(MovieModel.imdb_rating >= rating_from)
+    
+    if rating_to:
+        query = query.filter(MovieModel.imdb_rating <= rating_to)
+    
+    # Filter by genres if provided
+    if genres:
+        genres_list = genres.split(",")
+        if genres_list:
+            query = query.join(MovieModel.genres).filter(Genre.name.in_(genres_list))
+    
+    # Apply pagination
+    movies = query.offset(skip).limit(limit).all()
+    
     return movies
 
-@router.get("/{movie_id}", response_model=Movie)
-def read_movie(movie_id: str, db: Session = Depends(get_db)):
+@router.get("/{movie_id}")
+def read_movie(movie_id: int, db: Session = Depends(get_db)):
     """
-    Get a specific movie by its IMDb ID.
+    Get a specific movie by its ID.
     """
-    db_movie = get_movie_by_id(db, movie_id=movie_id)
+    db_movie = db.query(MovieModel).filter(MovieModel.id == movie_id).first()
     if db_movie is None:
         raise HTTPException(status_code=404, detail="Movie not found")
     return db_movie
 
-@router.post("/", response_model=Movie)
-def create_movie_endpoint(movie: MovieCreate, db: Session = Depends(get_db)):
+@router.post("/{movie_id}/genres/{genre_id}")
+def add_genre_to_movie_endpoint(movie_id: int, genre_id: int, db: Session = Depends(get_db)):
     """
-    Create a new movie.
+    Add a genre to a movie.
     """
-    return create_movie(db=db, movie=movie)
-
-@router.put("/{movie_id}", response_model=Movie)
-def update_movie_endpoint(movie_id: str, movie: MovieUpdate, db: Session = Depends(get_db)):
-    """
-    Update an existing movie.
-    """
-    db_movie = get_movie_by_id(db, movie_id=movie_id)
-    if db_movie is None:
-        raise HTTPException(status_code=404, detail="Movie not found")
-    return update_movie(db=db, movie_id=movie_id, movie=movie)
-
-@router.delete("/{movie_id}")
-def delete_movie_endpoint(movie_id: str, db: Session = Depends(get_db)):
-    """
-    Delete a movie.
-    """
-    db_movie = get_movie_by_id(db, movie_id=movie_id)
-    if db_movie is None:
-        raise HTTPException(status_code=404, detail="Movie not found")
-    delete_movie(db=db, movie_id=movie_id)
-    return {"message": "Movie deleted successfully"} 
+    movie = add_genre_to_movie(db, movie_id=movie_id, genre_id=genre_id)
+    if movie is None:
+        raise HTTPException(status_code=404, detail="Movie or genre not found")
+    return movie 

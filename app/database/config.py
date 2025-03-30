@@ -7,10 +7,19 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/movieseek")
+# Get database URL from environment or use SQLite by default
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./movieseek.db")
 
 # Create SQLAlchemy engine
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
+    # SQLite specific configuration
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+else:
+    # PostgreSQL or other databases
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Dependency to get DB session
