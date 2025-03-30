@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force Tailwind to generate these utility classes */
+.force-tailwind {
+  @apply text-black bg-white p-4 m-4 flex flex-col justify-center items-center;
+  @apply sm:flex-row md:p-8 lg:text-xl;
+  @apply bg-gray-100 bg-gray-200 bg-gray-300;
+  @apply bg-blue-100 bg-blue-200 bg-blue-300 bg-blue-400 bg-blue-500;
+  @apply text-primary-800 bg-secondary-100 bg-accent-400;
+}
+
+/* Plain CSS test */
+.plain-css-box {
+  background-color: purple;
+  color: white;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -21,4 +42,21 @@ body {
 
 #root {
   width: 100%;
+}
+
+/* Add global image constraints */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Add better container constraints */
+.container {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Ensure SVG elements don't expand unnecessarily */
+svg {
+  display: inline-block;
 } 
