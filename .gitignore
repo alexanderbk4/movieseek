@@ -62,3 +62,14 @@ yarn-error.log*
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# RateYourMusic scraping files
+rym_*.html
+rym_*.json
+app/database/rym_*
+app/database/rym_debug/
+app/database/rym_manual/
+rym_scrape.log
+rym_selenium_scrape.log
+rym_selenium_page_*.html
+rym_selenium_page_*.png
