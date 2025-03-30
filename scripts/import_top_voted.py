@@ -50,9 +50,8 @@ async def fetch_top_voted_movies(page_count=50, min_votes=1000):
     # TMDb returns 20 movies per page, so 50 pages = 1000 movies
     for page in range(1, page_count + 1):
         # Use discover API to sort by vote_count.desc
-        url = f"{tmdb_api.BASE_URL}/discover/movie"
+        endpoint = "/discover/movie"
         params = {
-            "api_key": tmdb_api.API_KEY,
             "language": "en-US",
             "sort_by": "vote_count.desc",
             "include_adult": "false",
@@ -62,7 +61,7 @@ async def fetch_top_voted_movies(page_count=50, min_votes=1000):
             "with_original_language": "en"  # Start with English language movies
         }
         
-        response = await tmdb_api._make_request(url, params)
+        response = await tmdb_api._make_request(endpoint, params)
         
         if "error" in response:
             logger.error(f"Error fetching movies: {response['error']}")
