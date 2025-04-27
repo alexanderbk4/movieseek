@@ -1,6 +1,6 @@
 # MovieSeek
 
-A vibecoded movie database application with recommendation system.
+A movie database application aiming to optimize movie recommendations based on user-provided data and preferences.
 
 ## Overview
 
